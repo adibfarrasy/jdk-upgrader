@@ -22,17 +22,17 @@ class CodeBlockExtractor:
     """
     Extracts modernizable code blocks from source files.
 
-    This class optimizes LLM token usage by extracting only relevant code sections
-    instead of passing entire files. It trades broader context for cost efficiency
-    by identifying keywords and extracting their smallest enclosing blocks.
+    This class optimizes LLM usage by extracting only relevant code blocks
+    instead of passing entire files.
+
+    It trades broader context for cost efficiency by identifying keywords and
+    extracting their smallest enclosing blocks.
 
     Cost optimization strategy:
     - Regex pre-filtering to avoid LLM calls on irrelevant files
     - Block-level extraction instead of file-level analysis
     - Merging overlapping regions to prevent duplicate processing
     - Size warnings to catch unexpectedly large blocks
-
-    Trade-off: May miss modernization opportunities that require broader context.
     """
 
     def __init__(self, max_block_lines: int = 20):
@@ -77,7 +77,8 @@ class CodeBlockExtractor:
         # Step 4: Create CodeBlock objects with metadata
         code_blocks = []
         for start_line, end_line, matched_keywords in merged_blocks:
-            block_content = self._extract_block_content(content, start_line, end_line)
+            block_content = self._extract_block_content(
+                content, start_line, end_line)
             code_block = CodeBlock(
                 content=block_content,
                 start_line=start_line,
@@ -239,7 +240,8 @@ class CodeBlockExtractor:
 
         # Step 3: Simple heuristic - if most braces were removed, probably in strings
         original_braces = line.count("{") + line.count("}")
-        remaining_braces = line_no_strings.count("{") + line_no_strings.count("}")
+        remaining_braces = line_no_strings.count(
+            "{") + line_no_strings.count("}")
 
         return original_braces > 0 and remaining_braces == 0
 
@@ -301,7 +303,7 @@ class CodeBlockExtractor:
         lines = content.splitlines()
 
         # Step 1: Extract the relevant lines (convert to 0-indexed)
-        block_lines = lines[start_line - 1 : end_line]
+        block_lines = lines[start_line - 1: end_line]
 
         # Step 2: Preserve original indentation
         return "\n".join(block_lines)
