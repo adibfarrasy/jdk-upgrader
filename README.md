@@ -1,6 +1,6 @@
-# JDK 21 Modernization Tool
+# target JDK Modernization Tool
 
-An AI-powered tool that automatically analyzes and modernizes Java, Groovy, and Kotlin projects for JDK 21 compatibility. The tool uses LLM analysis to suggest code improvements, build configuration updates, and automatically fixes compilation errors with human oversight.
+An AI-powered tool that automatically analyzes and modernizes Java, Groovy, and Kotlin projects for target JDK compatibility. The tool uses LLM analysis to suggest code improvements, build configuration updates, and automatically fixes compilation errors with human oversight.
 
 ## 🚀 Quick Start
 
@@ -14,7 +14,7 @@ An AI-powered tool that automatically analyzes and modernizes Java, Groovy, and 
 ```bash
 # Clone and install dependencies
 git clone <repository>
-cd jdk21-modernization-tool
+cd <repository>
 pip install -r requirements.txt
 
 # Install required packages
@@ -55,7 +55,7 @@ src/
 │
 ├── modernizers/             # Language-specific modernization
 │   ├── groovy_modernizer.py #   → Groovy + Gradle build scripts
-│   ├── java_modernizer.py   #   → Java code patterns for JDK 21
+│   ├── java_modernizer.py   #   → Java code patterns for target JDK
 │   └── kotlin_modernizer.py #   → Kotlin DSL and source files
 │
 ├── utils/             # Language-specific modernization

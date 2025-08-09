@@ -1,22 +1,27 @@
-from langchain.chains import LLMChain
+from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import PromptTemplate
+
+from config import Config
+from src.models.response import StructuredResponse, Change, Location
 
 
 class JavaModernizer:
-    """Suggests Java code modernization opportunities for JDK 21 features."""
+    """Suggests Java code modernization opportunities for target JDK features."""
 
     PROMPT = """
-    Analyze this Java code for JDK 21 modernization opportunities:
+    Analyze this Java code for JDK {target_jdk} modernization opportunities:
+    ```java
     {code}
+    ```
     
-    Look for:
-    - String concatenation that could use text blocks
-    - instanceof checks that could use pattern matching
-    - Verbose switch statements that could use switch expressions
-    - Stream operations that could be simplified
-    - Record class opportunities
+    Check for:
+    - Deprecated/removed APIs (sun.*, java.security.Policy methods)
+    - Reflection access issues (setAccessible warnings)
+    - Module system conflicts (unnamed module accessing restricted packages)
+    - Third-party dependencies requiring updates
+    - Opportunities: records, text blocks, pattern matching, switch expressions
     
-    Suggest modern Java 21 alternatives.
+    Suggest modern Java version {target_jdk} alternatives.
     """
 
     def __init__(self, llm):
@@ -26,14 +31,18 @@ class JavaModernizer:
         Args:
             llm: Azure OpenAI LLM instance from config
         """
-        self.chain = LLMChain(
-            llm=llm,
-            prompt=PromptTemplate(input_variables=["code"], template=self.PROMPT),
+        self.parser = PydanticOutputParser(pydantic_object=StructuredResponse)
+        self.prompt = PromptTemplate(
+            template=self.PROMPT,
+            input_variables=["code", "target_jdk"],
+            partial_variables={
+                "format_instructions": self.parser.get_format_instructions()}
         )
+        self.chain = self.prompt | llm | self.parser
 
     def analyze(self, code: str) -> str:
         """
-        Analyze Java code and suggest JDK 21 modernizations.
+        Analyze Java code and suggest target JDK modernizations.
 
         TODO:
         1. Parse Java source code to identify modernization opportunities

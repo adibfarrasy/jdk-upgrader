@@ -6,11 +6,12 @@ from rich.progress import track
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.prompt import Confirm
-
 from langchain_openai import AzureChatOpenAI
+from langchain.schema import HumanMessage
+
 from config import Config
-# from src.analyzers.gradle_analyzer import GradleAnalyzer
-# from src.analyzers.ci_analyzer import CIAnalyzer
+from src.analyzers.build_file_analyzer import BuildFileAnalyzer
+from src.analyzers.ci_analyzer import CIAnalyzer
 
 console = Console()
 
@@ -22,33 +23,42 @@ console = Console()
     "--auto-approve", is_flag=True, help="Apply all changes without prompting"
 )
 def main(repo_path: Path, dry_run: bool, auto_approve: bool):
-    """Upgrade Java projects to JDK 21."""
+    """Upgrade Java projects to target JDK."""
 
-    console.print(Panel.fit("🚀 JDK 21 Upgrader", style="bold blue"))
+    console.print(Panel.fit("🚀 JDK Upgrader", style="bold blue"))
 
     # Validate and initialize
     try:
         Config.validate()
         llm = AzureChatOpenAI(
             azure_endpoint=Config.AZURE_ENDPOINT,
-            azure_deployment=Config.AZURE_DEPLOYMENT_NAME,
             api_version=Config.AZURE_API_VERSION,
+            api_key=Config.AZURE_OPENAI_API_KEY,
+            azure_deployment=Config.AZURE_DEPLOYMENT_NAME,
             temperature=Config.TEMPERATURE,
         )
     except ValueError as e:
         console.print(f"❌ {e}", style="bold red")
         raise click.Abort()
 
-    gradle_analyzer = GradleAnalyzer(llm)
+    # TEST: LLM liveness / setup check
+    # response = llm.invoke([
+    #     HumanMessage(content="Hello, World! say something nice")
+    # ])
+    #
+    # console.print(f"Response: {response.content}", style="bold green")
+
+    build_file_analyzer = BuildFileAnalyzer(llm)
     ci_analyzer = CIAnalyzer(llm)
 
     # Process files
-    process_files(repo_path, gradle_analyzer, ci_analyzer, dry_run, auto_approve)
+    process_files(repo_path, build_file_analyzer,
+                  ci_analyzer, dry_run, auto_approve)
 
     console.print("✅ Analysis complete!", style="bold green")
 
 
-def process_files(repo_path, gradle_analyzer, ci_analyzer, dry_run, auto_approve):
+def process_files(repo_path, build_file_analyzer, ci_analyzer, dry_run, auto_approve):
     # Find all files to process
     all_files = []
     for pattern in Config.BUILD_FILES + Config.CI_FILES:
@@ -58,22 +68,28 @@ def process_files(repo_path, gradle_analyzer, ci_analyzer, dry_run, auto_approve
         console.print("No build or CI files found", style="yellow")
         return
 
-    # Process with progress bar
     for file_path in track(all_files, description="Analyzing files..."):
-        analyzer = gradle_analyzer if file_path.suffix in [".gradle"] else ci_analyzer
+        # analyzer = build_file_analyzer if file_path.suffix in [
+        #     ".gradle", ".xml"
+        # ] else ci_analyzer
+        #
+        # with open(file_path, "r") as f:
+        #     content = f.read()
+        #
+        # suggestions = analyzer.analyze(content)
+        # if suggestions:
+        #     show_and_apply_changes(
+        #         file_path, content, suggestions, dry_run, auto_approve
+        #     )
 
-        with open(file_path, "r") as f:
-            content = f.read()
-
-        suggestions = analyzer.analyze(content)
-        if suggestions:
-            show_and_apply_changes(
-                file_path, content, suggestions, dry_run, auto_approve
-            )
+        # TEST:
+        console.print(f"file_path: {file_path}", style="yellow")
 
 
 def show_and_apply_changes(
     file_path, original_content, suggestions, dry_run, auto_approve
+
+
 ):
     console.print(f"\n📄 [bold]{file_path}[/bold]")
 

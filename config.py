@@ -9,15 +9,30 @@ class Config:
         "AZURE_ENDPOINT", "https://achat.advai.net/api/v1/openai/proxy"
     )
     AZURE_API_VERSION: str = "2025-04-01-preview"
-    AZURE_DEPLOYMENT_NAME: str = os.getenv("AZURE_DEPLOYMENT_NAME", "gpt4o-mini")
+    AZURE_DEPLOYMENT_NAME: str = os.getenv(
+        "AZURE_DEPLOYMENT_NAME", "gpt4o-mini")
 
     TEMPERATURE: float = 0.1
 
-    BUILD_FILES = ["build.gradle", "build.gradle.kts"]
-    CI_FILES = ["Dockerfile", ".gitlab-ci.yaml"]
+    # NOTE:
+    # It is a deliberate decision NOT to update user-defined Gradle scripts
+    BUILD_FILES = [
+        # Gradle
+        "**/build.gradle",
+        "**/build.gradle.kts",
+        "**/settings.gradle",
+        "**/settings.gradle.kts",
+
+        # Maven
+        "**/pom.xml",
+    ]
+    CI_FILES = ["Dockerfile", ".gitlab-ci.yml", ".gitlab-ci.yaml"]
+    SOURCE_FILES = ["**/*.java", "**/*.groovy", "**/*.kt"]
+
     TARGET_JDK_VERSION = "21"
 
     @classmethod
     def validate(cls):
         if not cls.AZURE_OPENAI_API_KEY:
-            raise ValueError("AZURE_OPENAI_API_KEY environment variable required")
+            raise ValueError(
+                "AZURE_OPENAI_API_KEY environment variable required")

@@ -37,7 +37,7 @@ class PatchGenerator:
         return {
             "file": str(file_path),
             "changes": [],
-            "description": "JDK 21 upgrade changes",
+            "description": "target JDK upgrade changes",
             "original_lines": original_content.splitlines(),
             "suggested_lines": suggested_content.splitlines(),
         }

@@ -149,7 +149,7 @@ class CompilationErrorFixer:
            - Format error messages clearly for LLM
         3. Create LLM prompt with:
            - Error messages with line numbers
-           - Relevant code context 
+           - Relevant code context
            - Instructions to fix compilation issues only
         4. Parse LLM response for complete file content
         5. Validate suggested fixes are reasonable
