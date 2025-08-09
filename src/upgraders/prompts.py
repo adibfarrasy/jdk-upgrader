@@ -1,12 +1,14 @@
 LOGIC_PRESERVATION_PROMPT = """
 **CRITICAL: PRESERVE BUSINESS LOGIC**
 
-When modernizing code, you MUST maintain identical behavior and business logic. Follow these strict rules:
+When modernizing code, you MUST maintain identical behavior and business logic.
+Follow these strict rules:
 
 **1. SYNTAX-ONLY CHANGES:**
 - Update only language syntax and APIs, never logic flow
 - Modernize HOW code is written, not WHAT it does
 - If unsure whether a change affects logic, do NOT make the change
+- Prefer explicitly written type over type inference like `var`
 
 **2. BEHAVIORAL EQUIVALENCE:**
 - Ensure output is identical for all possible inputs
@@ -33,7 +35,7 @@ When modernizing code, you MUST maintain identical behavior and business logic. 
 
 # Language-specific safe modernization examples
 JAVA_SAFE_EXAMPLES = """
-**SAFE JAVA MODERNIZATIONS:**
+**SAFE JAVA UPGRADES:**
 ✅ `Arrays.asList(a, b, c)` → `List.of(a, b, c)`
 ✅ `if (x instanceof String) { String s = (String) x; }` → `if (x instanceof String s) {`
 ✅ String concatenation → Text blocks (preserving exact formatting)
@@ -42,7 +44,7 @@ JAVA_SAFE_EXAMPLES = """
 """
 
 GROOVY_SAFE_EXAMPLES = """
-**SAFE GROOVY MODERNIZATIONS:**
+**SAFE GROOVY UPGRADES:**
 ✅ `compile 'group:artifact:version'` → `implementation 'group:artifact:version'`
 ✅ `apply plugin: 'java'` → `plugins { id 'java' }`
 ✅ Old closure syntax → Modern DSL (preserving same configuration)
@@ -51,21 +53,12 @@ GROOVY_SAFE_EXAMPLES = """
 """
 
 KOTLIN_SAFE_EXAMPLES = """
-**SAFE KOTLIN MODERNIZATIONS:**
+**SAFE KOTLIN UPGRADES:**
 ✅ `jvmTarget = "1.8"` → `jvmTarget = "21"`
 ✅ `kotlin("jvm") version "1.5.0"` → `kotlin("jvm") version "1.9.0"`
 ✅ Old coroutines APIs → Modern stable APIs (same concurrency behavior)
 ✅ `kapt` → `ksp` (when safe and equivalent)
 ✅ Explicit type declarations → Type inference (where clear)
-"""
-
-BUILD_FILE_SAFE_EXAMPLES = """
-**SAFE BUILD FILE MODERNIZATIONS:**
-✅ Plugin version updates (maintaining compatibility)
-✅ Dependency version updates (patch/minor versions)
-✅ Build script syntax modernization
-✅ Configuration block reorganization (same effective config)
-✅ Repository declarations (jcenter() → mavenCentral())
 """
 
 
@@ -75,7 +68,6 @@ def get_logic_preservation_prompt(language: str) -> str:
         "java": JAVA_SAFE_EXAMPLES,
         "groovy": GROOVY_SAFE_EXAMPLES,
         "kotlin": KOTLIN_SAFE_EXAMPLES,
-        "build": BUILD_FILE_SAFE_EXAMPLES
     }
 
     examples = examples_map.get(language.lower(), "")

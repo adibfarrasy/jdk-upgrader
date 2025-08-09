@@ -1,6 +1,7 @@
 import re
-from typing import List, Tuple, Set
+from typing import List, Tuple
 from dataclasses import dataclass
+from rich.console import Console
 
 
 @dataclass
@@ -20,7 +21,7 @@ class CodeBlock:
 
 class CodeBlockExtractor:
     """
-    Extracts modernizable code blocks from source files.
+    Extracts upgradable code blocks from source files.
 
     This class optimizes LLM usage by extracting only relevant code blocks
     instead of passing entire files.
@@ -35,7 +36,7 @@ class CodeBlockExtractor:
     - Size warnings to catch unexpectedly large blocks
     """
 
-    def __init__(self, max_block_lines: int = 20):
+    def __init__(self, max_block_lines: int = 20, console=None):
         """
         Initialize the code block extractor.
 
@@ -43,6 +44,7 @@ class CodeBlockExtractor:
             max_block_lines: Warning threshold for large blocks
         """
         self.max_block_lines = max_block_lines
+        self.console = console or Console()
 
     def extract_blocks(
         self, file_path: str, content: str, keywords: List[str]
@@ -72,7 +74,7 @@ class CodeBlockExtractor:
                 raw_blocks.append(block)
 
         # Step 3: Merge overlapping or adjacent blocks
-        merged_blocks = self._merge_overlapping_blocks(raw_blocks)
+        merged_blocks = self._merge_blocks(raw_blocks)
 
         # Step 4: Create CodeBlock objects with metadata
         code_blocks = []
@@ -97,7 +99,7 @@ class CodeBlockExtractor:
         self, content: str, keywords: List[str]
     ) -> List[Tuple[int, str]]:
         """
-        Find all lines containing modernization keywords.
+        Find all lines containing upgrade keywords.
 
         Args:
             content: File content to search
@@ -245,7 +247,7 @@ class CodeBlockExtractor:
 
         return original_braces > 0 and remaining_braces == 0
 
-    def _merge_overlapping_blocks(
+    def _merge_blocks(
         self, blocks: List[Tuple[int, int, str]]
     ) -> List[Tuple[int, int, List[str]]]:
         """
@@ -260,6 +262,10 @@ class CodeBlockExtractor:
         if not blocks:
             return []
 
+        if len(blocks) == 1:
+            start, end, keyword = blocks[0]
+            return [(start, end, [keyword])]
+
         # Step 1: Sort blocks by start line
         sorted_blocks = sorted(blocks, key=lambda x: x[0])
 
@@ -269,8 +275,8 @@ class CodeBlockExtractor:
         current_keywords = [current_keyword]
 
         for start, end, keyword in sorted_blocks[1:]:
-            # Step 3: Check if blocks overlap or are adjacent (within 1-2 lines)
-            if start <= current_end + 2:  # Allow small gaps
+            # Step 3: Check if blocks overlap or are adjacent (within 2 lines)
+            if start <= current_end + 2:
                 # Merge: extend current block and combine keywords
                 current_end = max(current_end, end)
                 if keyword not in current_keywords:
@@ -319,10 +325,16 @@ class CodeBlockExtractor:
             # Step 1: Check if block exceeds size threshold
             if block.line_count > self.max_block_lines:
                 # Step 2: Emit warning (non-blocking)
-                print(f"⚠️  Large code block detected in {block.file_path}")
-                print(
-                    f"   Lines {block.start_line}-{block.end_line} ({block.line_count} lines)"
-                )
-                print(f"   Keywords: {', '.join(block.matched_keywords)}")
-                print(f"   Consider adjusting keywords or block extraction logic")
-                print()  # Empty line for readability
+                self.console.print(
+                    f"⚠️  Large code block detected in {block.file_path}",
+                    style="yellow")
+                self.console.print(
+                    f"   Lines {block.start_line}-{block.end_line} ({block.line_count} lines)",
+                    style="yellow")
+                self.console.print(
+                    f"   Keywords: {', '.join(block.matched_keywords)}",
+                    style="yellow")
+                self.console.print(
+                    f"   Consider adjusting keywords or block extraction logic",
+                    style="yellow")
+                self.console.print()  # Empty line for readability

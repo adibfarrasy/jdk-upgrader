@@ -1,9 +1,5 @@
 TODOs:
-	src/analyzers/ci_analyzer.py:61:	Handle parsing errors gracefully
-	src/analyzers/build_file_analyzer.py:89:	Handle parsing errors gracefully
-	src/config/modernization_config.py:6:	update keywords for java
-	src/config/modernization_config.py:9:	update keywords for groovy
-	src/config/modernization_config.py:12:	update keywords for kotlin
+	src/writers/change_writer.py:62:	Implement proper change application using the Change objects
 	src/build_fixers/error_handler.py:23:	Define which error types are actionable
 	src/build_fixers/error_handler.py:56:	Implement actual Gradle execution
 	src/build_fixers/error_handler.py:66:	Parse result.stdout and result.stderr for errors
@@ -28,5 +24,3 @@ TODOs:
 	src/reviewer.py:92:	Add more options (view original, compare side-by-side)
 	src/reviewer.py:103:	Add backup functionality
 	src/reviewer.py:115:	Implement interactive editing
-	src/generators/patch_generator.py:36:	Implement diff generation
-	src/generators/patch_generator.py:65:	Implement patch application

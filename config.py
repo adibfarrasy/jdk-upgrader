@@ -56,12 +56,15 @@ class Config:
         - Preserve code formatting and indentation style
         - Ensure changes work together as a cohesive set
         - Validate that line numbers are accurate and non-overlapping
+        - When suggesting changes, consolidate related modifications into single
+            changes when possible. For example, if multiple consecutive lines
+            need similar updates, provide ONE change that updates all lines
+            together rather than separate changes for each line.
     """
 
     EXTRA_PROMPTS = {
-        "analyzers": os.getenv("EXTRA_PROMPT_ANALYZERS", ""),
+        "upgraders": os.getenv("EXTRA_PROMPT_UPGRADERS", ""),
         "build_fixers": os.getenv("EXTRA_PROMPT_BUILD_FIXERS", ""),
-        "modernizers": os.getenv("EXTRA_PROMPT_MODERNIZERS", ""),
     }
 
     TARGET_JDK_VERSION = "21"

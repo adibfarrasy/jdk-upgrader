@@ -1,4 +1,4 @@
-class ModernizationConfig:
+class UpgraderConfig:
     SKIP_PATTERNS = [
         # Generated/compiled files
         "build/*",
@@ -36,7 +36,7 @@ class ModernizationConfig:
 
     MAX_BLOCK_LINES = 20
 
-    MODERNIZATION_KEYWORDS_JAVA = [
+    UPGRADE_KEYWORDS_JAVA = [
         # JDK 9-11: Collection Factory Methods
         r"Arrays\.asList\(",
         r"Collections\.unmodifiableList\(",
@@ -106,7 +106,7 @@ class ModernizationConfig:
         r"Calendar\.",
     ]
 
-    MODERNIZATION_KEYWORDS_GROOVY = [
+    UPGRADE_KEYWORDS_GROOVY = [
         # Build Script Modernization
         r"compile\s+['\"]",
         r"testCompile\s+['\"]",
@@ -154,7 +154,7 @@ class ModernizationConfig:
         r"maven\s*\{",
     ]
 
-    MODERNIZATION_KEYWORDS_KOTLIN = [
+    UPGRADE_KEYWORDS_KOTLIN = [
         # JVM Target
         r"jvmTarget\s*=\s*['\"]1\.[8-9]['\"]",
         r"jvmTarget\s*=\s*['\"]11['\"]",
