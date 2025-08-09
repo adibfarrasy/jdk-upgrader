@@ -1,7 +1,6 @@
 TODOs:
-	src/analyzers/dependency_analyzer.py:75:	Handle parsing errors gracefully
-	src/analyzers/ci_analyzer.py:73:	Handle parsing errors gracefully
-	src/analyzers/gradle_analyzer.py:81:	Handle parsing errors gracefully
+	src/analyzers/ci_analyzer.py:61:	Handle parsing errors gracefully
+	src/analyzers/build_file_analyzer.py:89:	Handle parsing errors gracefully
 	src/config/modernization_config.py:6:	update keywords for java
 	src/config/modernization_config.py:9:	update keywords for groovy
 	src/config/modernization_config.py:12:	update keywords for kotlin
