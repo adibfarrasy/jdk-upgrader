@@ -21,7 +21,11 @@ class GroovyModernizer:
     - @CompileStatic annotations with new JDK features
     - Grape/dependency resolution problems
     
+    {extra_prompt}
+
     Suggest improvements for JDK {target_jdk} compatibility.
+
+    {format_instructions}
     """
 
     def __init__(self, llm):
@@ -34,7 +38,7 @@ class GroovyModernizer:
         self.parser = PydanticOutputParser(pydantic_object=StructuredResponse)
         self.prompt = PromptTemplate(
             template=self.PROMPT,
-            input_variables=["code", "target_jdk"],
+            input_variables=["code", "target_jdk", "extra_prompt"],
             partial_variables={
                 "format_instructions": self.parser.get_format_instructions()}
         )

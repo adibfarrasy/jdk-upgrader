@@ -6,6 +6,7 @@ from rich.progress import track
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.prompt import Confirm
+from rich.markdown import Markdown
 from langchain_openai import AzureChatOpenAI
 from langchain.schema import HumanMessage
 
@@ -51,7 +52,6 @@ def main(repo_path: Path, dry_run: bool, auto_approve: bool):
     build_file_analyzer = BuildFileAnalyzer(llm)
     ci_analyzer = CIAnalyzer(llm)
 
-    # Process files
     process_files(repo_path, build_file_analyzer,
                   ci_analyzer, dry_run, auto_approve)
 
@@ -59,7 +59,6 @@ def main(repo_path: Path, dry_run: bool, auto_approve: bool):
 
 
 def process_files(repo_path, build_file_analyzer, ci_analyzer, dry_run, auto_approve):
-    # Find all files to process
     all_files = []
     for pattern in Config.BUILD_FILES + Config.CI_FILES:
         all_files.extend(repo_path.glob(pattern))
@@ -68,7 +67,7 @@ def process_files(repo_path, build_file_analyzer, ci_analyzer, dry_run, auto_app
         console.print("No build or CI files found", style="yellow")
         return
 
-    for file_path in track(all_files, description="Analyzing files..."):
+    for file_path in track(all_files):
         analyzer = build_file_analyzer if file_path.suffix in [
             ".gradle", ".xml"
         ] else ci_analyzer
@@ -82,17 +81,13 @@ def process_files(repo_path, build_file_analyzer, ci_analyzer, dry_run, auto_app
                 file_path, content, suggestions, dry_run, auto_approve
             )
 
-        # TEST:
-        # console.print(f"file_path: {file_path}", style="yellow")
-
 
 def show_and_apply_changes(
     file_path, original_content, suggestions, dry_run, auto_approve
 ):
     console.print(f"\n📄 [bold]{file_path}[/bold]")
 
-    syntax = Syntax(suggestions, "gradle", theme="monokai", line_numbers=True)
-    console.print(Panel(syntax, title="Proposed Changes"))
+    console.print(str(suggestions), markup=True)
 
     if dry_run:
         console.print("🔍 [yellow]Dry run - no changes applied[/yellow]")
@@ -100,8 +95,8 @@ def show_and_apply_changes(
 
     if auto_approve or Confirm.ask("Apply these changes?"):
         try:
-            with open(file_path, "w") as f:
-                f.write(suggestions)
+            # with open(file_path, "w") as f:
+            #     f.write(suggestions)
             console.print("✅ Changes applied", style="green")
         except Exception as e:
             console.print(f"❌ Failed to write file: {e}", style="red")

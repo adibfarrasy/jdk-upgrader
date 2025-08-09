@@ -18,7 +18,11 @@ class CIAnalyzer:
     - Java version parameters
     - Build matrix configurations
     
+    {extra_prompt}
+
     Return updated configuration with JDK {target_jdk}.
+
+    {format_instructions}
     """
 
     def __init__(self, llm):
@@ -31,7 +35,7 @@ class CIAnalyzer:
         self.parser = PydanticOutputParser(pydantic_object=StructuredResponse)
         self.prompt = PromptTemplate(
             template=self.PROMPT,
-            input_variables=["file_content", "target_jdk"],
+            input_variables=["file_content", "target_jdk", "extra_prompt"],
             partial_variables={
                 "format_instructions": self.parser.get_format_instructions()}
         )
@@ -61,6 +65,7 @@ class CIAnalyzer:
                 {
                     "file_content": content,
                     "target_jdk": Config.TARGET_JDK_VERSION,
+                    "extra_prompt": Config.EXTRA_PROMPTS["analyzers"],
                 }
             )
 

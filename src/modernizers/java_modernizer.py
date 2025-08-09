@@ -21,7 +21,11 @@ class JavaModernizer:
     - Third-party dependencies requiring updates
     - Opportunities: records, text blocks, pattern matching, switch expressions
     
+    {extra_prompt}
+
     Suggest modern Java version {target_jdk} alternatives.
+
+    {format_instructions}
     """
 
     def __init__(self, llm):
@@ -34,7 +38,7 @@ class JavaModernizer:
         self.parser = PydanticOutputParser(pydantic_object=StructuredResponse)
         self.prompt = PromptTemplate(
             template=self.PROMPT,
-            input_variables=["code", "target_jdk"],
+            input_variables=["code", "target_jdk", "extra_prompt"],
             partial_variables={
                 "format_instructions": self.parser.get_format_instructions()}
         )

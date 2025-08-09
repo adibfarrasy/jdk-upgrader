@@ -46,7 +46,11 @@ class BuildFileAnalyzer:
     3. Explain why the change is necessary for JDK {target_jdk}
     4. Consider dependencies between changes (e.g., plugin updates before dependency updates)
     
+    {extra_prompt}
+
     Return comprehensive analysis in the specified JSON format.
+
+    {format_instructions}
     """
 
     def __init__(self, llm):
@@ -59,7 +63,7 @@ class BuildFileAnalyzer:
         self.parser = PydanticOutputParser(pydantic_object=StructuredResponse)
         self.prompt = PromptTemplate(
             template=self.PROMPT,
-            input_variables=["file_content", "target_jdk"],
+            input_variables=["file_content", "target_jdk", "extra_prompt"],
             partial_variables={
                 "format_instructions": self.parser.get_format_instructions()}
         )
@@ -92,6 +96,7 @@ class BuildFileAnalyzer:
                 {
                     "file_content": content,
                     "target_jdk": Config.TARGET_JDK_VERSION,
+                    "extra_prompt": Config.EXTRA_PROMPTS["analyzers"],
                 }
             )
 

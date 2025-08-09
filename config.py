@@ -29,6 +29,12 @@ class Config:
     CI_FILES = ["Dockerfile", ".gitlab-ci.yml", ".gitlab-ci.yaml"]
     SOURCE_FILES = ["**/*.java", "**/*.groovy", "**/*.kt"]
 
+    EXTRA_PROMPTS = {
+        "analyzers": os.getenv("EXTRA_PROMPT_ANALYZERS", ""),
+        "build_fixers": os.getenv("EXTRA_PROMPT_BUILD_FIXERS", ""),
+        "modernizers": os.getenv("EXTRA_PROMPT_MODERNIZERS", ""),
+    }
+
     TARGET_JDK_VERSION = "21"
 
     @classmethod
