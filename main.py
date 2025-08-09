@@ -69,31 +69,28 @@ def process_files(repo_path, build_file_analyzer, ci_analyzer, dry_run, auto_app
         return
 
     for file_path in track(all_files, description="Analyzing files..."):
-        # analyzer = build_file_analyzer if file_path.suffix in [
-        #     ".gradle", ".xml"
-        # ] else ci_analyzer
-        #
-        # with open(file_path, "r") as f:
-        #     content = f.read()
-        #
-        # suggestions = analyzer.analyze(content)
-        # if suggestions:
-        #     show_and_apply_changes(
-        #         file_path, content, suggestions, dry_run, auto_approve
-        #     )
+        analyzer = build_file_analyzer if file_path.suffix in [
+            ".gradle", ".xml"
+        ] else ci_analyzer
+
+        with open(file_path, "r") as f:
+            content = f.read()
+
+        suggestions = analyzer.analyze(content, file_path)
+        if suggestions:
+            show_and_apply_changes(
+                file_path, content, suggestions, dry_run, auto_approve
+            )
 
         # TEST:
-        console.print(f"file_path: {file_path}", style="yellow")
+        # console.print(f"file_path: {file_path}", style="yellow")
 
 
 def show_and_apply_changes(
     file_path, original_content, suggestions, dry_run, auto_approve
-
-
 ):
     console.print(f"\n📄 [bold]{file_path}[/bold]")
 
-    # Show diff with syntax highlighting
     syntax = Syntax(suggestions, "gradle", theme="monokai", line_numbers=True)
     console.print(Panel(syntax, title="Proposed Changes"))
 
@@ -101,7 +98,6 @@ def show_and_apply_changes(
         console.print("🔍 [yellow]Dry run - no changes applied[/yellow]")
         return
 
-    # Get approval
     if auto_approve or Confirm.ask("Apply these changes?"):
         try:
             with open(file_path, "w") as f:

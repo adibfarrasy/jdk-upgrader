@@ -47,8 +47,6 @@ class BuildFileAnalyzer:
     4. Consider dependencies between changes (e.g., plugin updates before dependency updates)
     
     Return comprehensive analysis in the specified JSON format.
-    
-    {format_instructions}
     """
 
     def __init__(self, llm):
@@ -109,29 +107,3 @@ class BuildFileAnalyzer:
                 summary=f"Failed to analyze build file {file_path} due to parsing error: {str(e)}",
                 changes=[]
             )
-
-    def analyze_gradle_file(self, content: str, file_path: str = "build.gradle") -> StructuredResponse:
-        """
-        Convenience method specifically for Gradle files.
-
-        Args:
-            content: Gradle build file content
-            file_path: Path to the Gradle file
-
-        Returns:
-            StructuredResponse with Gradle-specific modernization
-        """
-        return self.analyze(content, file_path)
-
-    def analyze_maven_file(self, content: str, file_path: str = "pom.xml") -> StructuredResponse:
-        """
-        Convenience method specifically for Maven files.
-
-        Args:
-            content: Maven POM file content
-            file_path: Path to the POM file
-
-        Returns:
-            StructuredResponse with Maven-specific modernization
-        """
-        return self.analyze(content, file_path)
