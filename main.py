@@ -2,10 +2,10 @@
 import click
 from pathlib import Path
 from rich.console import Console
-from rich.progress import track
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.prompt import Confirm
+from rich.progress import Progress
 from rich.markdown import Markdown
 from langchain_openai import AzureChatOpenAI
 from langchain.schema import HumanMessage
@@ -67,19 +67,24 @@ def process_files(repo_path, build_file_analyzer, ci_analyzer, dry_run, auto_app
         console.print("No build or CI files found", style="yellow")
         return
 
-    for file_path in track(all_files):
-        analyzer = build_file_analyzer if file_path.suffix in [
-            ".gradle", ".xml"
-        ] else ci_analyzer
-
-        with open(file_path, "r") as f:
-            content = f.read()
-
-        suggestions = analyzer.analyze(content, file_path)
-        if suggestions:
-            show_and_apply_changes(
-                file_path, content, suggestions, dry_run, auto_approve
-            )
+    results = []
+   
+    with Progress() as progress:
+        task = progress.add_task("Analyzing files...", total=len(all_files))
+        for file_path in all_files:
+           analyzer = build_file_analyzer if file_path.suffix in [
+               ".gradle", ".xml"
+           ] else ci_analyzer
+           with open(file_path, "r") as f:
+               content = f.read()
+           suggestions = analyzer.analyze(content, file_path)
+           if suggestions:
+               results.append((file_path, content, suggestions))
+           progress.advance(task)
+   
+   # Now show results and prompt (progress bar is done)
+    for file_path, content, suggestions in results:
+        show_and_apply_changes(file_path, content, suggestions, dry_run, auto_approve)
 
 
 def show_and_apply_changes(
@@ -95,6 +100,8 @@ def show_and_apply_changes(
 
     if auto_approve or Confirm.ask("Apply these changes?"):
         try:
+            # TODO: use code extractor and only replace line contents
+            # instead of re-writing the file
             # with open(file_path, "w") as f:
             #     f.write(suggestions)
             console.print("✅ Changes applied", style="green")

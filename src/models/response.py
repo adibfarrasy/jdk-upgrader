@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Literal
 from pydantic import BaseModel, Field
 
 
@@ -21,8 +21,12 @@ class Change(BaseModel):
 
     reason: str = Field(description="Why this change is needed")
     location: Location = Field(description="Where to make the change")
-    before: str = Field(description="Original code to replace")
-    after: str = Field(description="New code to replace with")
+    before: str = Field(description="""Original code to replace.
+                not empty if `change_type` is update or delete.""")
+    after: str = Field(description="""New code to replace with.
+                not empty if `change_type` is create or update.""")
+    change_type: Literal["insert", "update", "delete"] = Field(
+        description="insert|update|delete")
 
     def __str__(self) -> str:
 

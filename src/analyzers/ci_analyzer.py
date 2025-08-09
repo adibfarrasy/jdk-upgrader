@@ -1,4 +1,4 @@
-from langchain.output_parsers import PydanticOutputParser
+from langchain.output_parsers import PydanticOutputParser, OutputFixingParser
 from langchain.prompts import PromptTemplate
 
 from config import Config
@@ -32,7 +32,8 @@ class CIAnalyzer:
         Args:
             llm: Azure OpenAI LLM instance from config
         """
-        self.parser = PydanticOutputParser(pydantic_object=StructuredResponse)
+        base_parser = PydanticOutputParser(pydantic_object=StructuredResponse)
+        self.parser = OutputFixingParser.from_llm(parser=base_parser, llm=llm)
         self.prompt = PromptTemplate(
             template=self.PROMPT,
             input_variables=["file_content", "target_jdk", "extra_prompt"],
