@@ -26,9 +26,9 @@ console = Console()
 def main(repo_path: Path, dry_run: bool, auto_approve: bool):
     """Upgrade Java projects to target JDK."""
 
-    console.print(Panel.fit("🚀 JDK Upgrader", style="bold blue"))
+    console.print(Panel.fit("🚀 JDK Upgrader", padding=(
+        2, 5), style="bold blue"))
 
-    # Validate and initialize
     try:
         Config.validate()
         llm = AzureChatOpenAI(
@@ -51,12 +51,11 @@ def main(repo_path: Path, dry_run: bool, auto_approve: bool):
 
     pipeline = UpgradePipeline(llm, console)
     responses = pipeline.analyze_repository(repo_path)
-    
+
     writer = ChangeWriter(console)
     writer.process_responses(responses, dry_run, auto_approve)
-    
-    console.print("✅ Analysis complete!", style="bold green")
 
+    console.print("✅ Analysis complete!", style="bold green")
 
 if __name__ == "__main__":
     main()

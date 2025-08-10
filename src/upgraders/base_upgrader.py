@@ -4,7 +4,7 @@ from rich.console import Console
 
 from config import Config
 from src.models.response import StructuredResponse
-from src.upgraders.prompts import get_logic_preservation_prompt
+from src.upgraders.prompts import get_logic_preservation_prompt, CHANGE_PROMPT, EXTRA_PROMPT
 
 
 class BaseUpgrader:
@@ -34,8 +34,8 @@ class BaseUpgrader:
 
         return {
             "analysis_instructions": self.ANALYSIS_INSTRUCTIONS,
-            "change_prompt": Config.CHANGE_PROMPT,
-            "extra_prompt": Config.EXTRA_PROMPTS.get("upgraders", ""),
+            "change_prompt": CHANGE_PROMPT,
+            "extra_prompt": EXTRA_PROMPT,
             "format_instructions": self.parser.get_format_instructions(),
             "logic_preservation_prompt": get_logic_preservation_prompt(language),
         }

@@ -37,7 +37,7 @@ class BuildUpgrader(BaseUpgrader):
     PROMPT = """
     Analyze this build file for JDK {target_jdk} upgrade and suggest changes:
     {file_content}
-    
+
     {analysis_instructions}
     {change_prompt}
     {extra_prompt}

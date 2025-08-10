@@ -16,6 +16,9 @@ class CIUpgrader(BaseUpgrader):
     Analyze this CI configuration file for JDK {target_jdk} upgrade
     and suggest changes:
     {file_content}
+
+    When specifying line numbers in your changes, count from line 1
+    at the top of the file.
     
     {analysis_instructions}
     {change_prompt}

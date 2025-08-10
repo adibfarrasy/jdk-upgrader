@@ -1,3 +1,5 @@
+import os
+
 LOGIC_PRESERVATION_PROMPT = """
 **CRITICAL: PRESERVE BUSINESS LOGIC**
 
@@ -72,3 +74,55 @@ def get_logic_preservation_prompt(language: str) -> str:
 
     examples = examples_map.get(language.lower(), "")
     return f"{LOGIC_PRESERVATION_PROMPT}\n\n{examples}"
+
+
+CHANGE_PROMPT = """
+    For each change needed, specify the change type and provide appropriate details:
+
+    **INSERT changes** (adding new code):
+    1. Identify the exact line number where new code should be inserted
+    2. Provide the new code to insert (leave 'before' empty)
+    3. Explain why this addition is necessary for JDK {target_jdk}
+    4. Consider placement relative to existing code (imports, dependencies, etc.)
+
+    **UPDATE changes** (modifying existing code):
+    1. Identify the exact lines that need modification (start_line to end_line)
+    2. Provide both the current code (before) and replacement code (after)
+    3. Explain why the change is necessary for JDK {target_jdk}
+    4. Ensure the replacement maintains the same functionality with modern syntax
+
+    **DELETE changes** (removing obsolete code):
+    1. Identify the exact lines that need removal (start_line to end_line)
+    2. Provide the current code to be deleted (leave 'after' empty)
+    3. Explain why this code is obsolete or incompatible with JDK {target_jdk}
+    4. Ensure removal doesn't break dependencies or required functionality
+
+    **General considerations for all changes:**
+    - Consider dependencies between changes (e.g., plugin updates before dependency updates)
+    - Maintain proper ordering (imports before usage, declarations before references)
+    - Preserve code formatting and indentation style
+    - Insert changes should be in the same indentation level as the adjacent codes in the file
+    - Update changes should be in the same indentation level as the code it replaces
+    - Ensure changes work together as a cohesive set
+    - Validate that line numbers are accurate and non-overlapping
+    - When suggesting changes, consolidate related modifications into single
+        changes when possible. For example, if multiple consecutive lines
+        need similar updates, provide ONE change that updates all lines
+        together rather than separate changes for each line.
+"""
+
+# NOTE: Use this to experiment and fine-tune the responses.
+# Prefer to write here than in the upgrader classes' PROMPT to save tokens
+EXTRA_PROMPT = "\n\n".join([
+    os.getenv("EXTRA_PROMPT_UPGRADERS", ""),
+
+    """
+    IMPORTANT:
+    - Reference line numbers exactly as they appear in the file (starting from line 1)
+    - For Gradle files, use Gradle syntax suggestions
+    - For Maven files (pom.xml), use Maven syntax suggestions
+    - For .properties files, only suggest property changes
+    """,
+
+    # add your own prompts here...
+])

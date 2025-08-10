@@ -16,6 +16,9 @@ run path:
 dry-run path:
     python main.py {{path}} --dry-run
 
+auto path:
+    python main.py {{path}} --auto-approve
+
 clean:
     find . -type d -name __pycache__ -delete
     find . -name "*.pyc" -delete
