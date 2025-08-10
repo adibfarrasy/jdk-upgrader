@@ -1,4 +1,4 @@
-# JDK Modernization Tool
+# JDK Upgrade Tool
 
 An AI-powered tool that automatically analyzes and modernizes Java, Groovy, and Kotlin projects for target JDK compatibility. The tool uses LLM analysis to suggest code improvements, build configuration updates, and automatically fixes compilation errors with human oversight.
 
@@ -22,7 +22,7 @@ pip install langchain openai rich pathlib
 
 ### Basic Usage
 ```bash
-# Run modernization on your project
+# Run JDK upgrade on your project
 just run /path/to/project
 # or `python main.py --project-path /path/to/project`
 
