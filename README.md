@@ -1,4 +1,4 @@
-# target JDK Modernization Tool
+# JDK Modernization Tool
 
 An AI-powered tool that automatically analyzes and modernizes Java, Groovy, and Kotlin projects for target JDK compatibility. The tool uses LLM analysis to suggest code improvements, build configuration updates, and automatically fixes compilation errors with human oversight.
 
