@@ -7,8 +7,7 @@ An AI-powered tool that automatically analyzes and modernizes Java, Groovy, and 
 ### Prerequisites
 - Python 3.8+
 - Azure OpenAI API access
-- Gradle project with Java/Groovy/Kotlin code
-- `gradlew` or `gradle` available in project root
+- Project with Java/Groovy/Kotlin source code and Gradle/ Maven scripts
 
 ### Installation
 ```bash
@@ -24,11 +23,14 @@ pip install langchain openai rich pathlib
 ### Basic Usage
 ```bash
 # Run modernization on your project
-python main.py --project-path /path/to/gradle/project
+just run /path/to/project
+# or `python main.py --project-path /path/to/project`
 
-# With specific file patterns
-python main.py --project-path ./my-app --include "*.java,*.groovy"
+# With auto-approve changes
+just auto /path/to/project
+# or `python main.py --project-path /path/to/project --auto-approve`
 
 # Dry run (analyze and show diffs, but don't write files)
-python main.py --project-path ./my-app --dry-run
+just dry-run /path/to/project 
+# or `python main.py --project-path ./my-app --dry-run`
 ```
