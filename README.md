@@ -15,13 +15,13 @@ An AI-powered tool that automatically analyzes and modernizes Java, Groovy, and 
 git clone <repository>
 cd <repository>
 pip install -r requirements.txt
-
-# Install required packages
-pip install langchain openai rich pathlib
 ```
 
 ### Basic Usage
 ```bash
+# Install just
+# https://github.com/casey/just
+
 # Run JDK upgrade on your project
 just run /path/to/project
 # or `python main.py --project-path /path/to/project`
