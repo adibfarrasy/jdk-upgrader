@@ -1,39 +1,4 @@
 class UpgraderConfig:
-    SKIP_PATTERNS = [
-        # Generated/compiled files
-        "build/*",
-        "bin/*",
-        ".gradle/*",
-        "target/*",
-        "out/*",
-
-        # Generated source code
-        "generated/*",
-        "**/generated/**",
-        "gen/*",
-        "**/gen/**",
-
-        # Build artifacts
-        "*.class",
-        "*.jar",
-        "*.war",
-        "*.ear",
-
-        # IDE files
-        ".idea/*",
-        ".vscode/*",
-        "*.iml",
-
-        # Version control
-        ".git/*",
-
-        # Logs and temporary files
-        "logs/*",
-        "*.log",
-        "tmp/*",
-        "temp/*",
-    ]
-
     MAX_BLOCK_LINES = 20
 
     UPGRADE_KEYWORDS_JAVA = [

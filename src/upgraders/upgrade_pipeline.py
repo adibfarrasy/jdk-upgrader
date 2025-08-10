@@ -36,7 +36,8 @@ class UpgradePipeline:
         ci_files = self._collect_files(repo_path, Config.CI_FILES)
         source_files = self._collect_files(repo_path, Config.SOURCE_FILES)
 
-        total_files = len(build_files) + len(ci_files) + len(source_files)
+        total_files = len(build_files) + len(ci_files)
+        # + len(source_files)
 
         with Progress(
             TextColumn("{task.description}\n"),
@@ -63,13 +64,13 @@ class UpgradePipeline:
                     all_responses.append(response)
                 progress.advance(task)
 
-            for file_path in source_files:
-                relative_path = file_path.relative_to(repo_path)
-                progress.update(
-                    task, description=f"Analyzing {relative_path}...")
-                responses = self._analyze_source_file(file_path)
-                all_responses.extend(responses)
-                progress.advance(task)
+            # for file_path in source_files:
+            #     relative_path = file_path.relative_to(repo_path)
+            #     progress.update(
+            #         task, description=f"Analyzing {relative_path}...")
+            #     responses = self._analyze_source_file(file_path)
+            #     all_responses.extend(responses)
+            #     progress.advance(task)
 
         return all_responses
 

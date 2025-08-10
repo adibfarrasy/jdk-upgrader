@@ -22,9 +22,11 @@ class Config:
         "**/build.gradle.kts",
         "**/settings.gradle",
         "**/settings.gradle.kts",
+        "**/gradle-wrapper.properties",
 
         # Maven
         "**/pom.xml",
+        "**/maven-wrapper.properties"
     ]
     CI_FILES = ["Dockerfile", ".gitlab-ci.yml", ".gitlab-ci.yaml"]
     SOURCE_FILES = ["**/*.java", "**/*.groovy", "**/*.kt"]
@@ -54,6 +56,8 @@ class Config:
         - Consider dependencies between changes (e.g., plugin updates before dependency updates)
         - Maintain proper ordering (imports before usage, declarations before references)
         - Preserve code formatting and indentation style
+        - Insert changes should be in the same indentation level as the adjacent codes in the file
+        - Update changes should be in the same indentation level as the code it replaces
         - Ensure changes work together as a cohesive set
         - Validate that line numbers are accurate and non-overlapping
         - When suggesting changes, consolidate related modifications into single
