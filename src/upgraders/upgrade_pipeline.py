@@ -41,35 +41,41 @@ class UpgradePipeline:
         with Progress(
             TextColumn("{task.description}\n"),
             TaskProgressColumn(),
+            TextColumn("({task.completed}/{task.total})"),
             TimeElapsedColumn(),
         ) as progress:
             task = progress.add_task("Analyzing files...", total=total_files)
 
+            def process_file(file_path, analyzer_func):
+                try:
+                    relative_path = str(file_path.relative_to(repo_path))
+                    if len(relative_path) > 60:
+                        relative_path = "..." + relative_path[-57:]
+
+                    progress.update(
+                        task, description=f"Analyzing {relative_path}...")
+                    return analyzer_func(file_path)
+                except Exception as e:
+                    self.console.print(
+                        f"[yellow]Warning: Failed to analyze {file_path}: {e}[/yellow]")
+                    return None
+                finally:
+                    progress.advance(task)
+
             for file_path in build_files:
-                relative_path = file_path.relative_to(repo_path)
-                progress.update(
-                    task, description=f"Analyzing {relative_path}...")
-                response = self._analyze_build_file(file_path)
+                response = process_file(file_path, self._analyze_build_file)
                 if response and response.changes:
                     all_responses.append(response)
-                progress.advance(task)
 
             for file_path in ci_files:
-                relative_path = file_path.relative_to(repo_path)
-                progress.update(
-                    task, description=f"Analyzing {relative_path}...")
-                response = self._analyze_ci_file(file_path)
+                response = process_file(file_path, self._analyze_ci_file)
                 if response and response.changes:
                     all_responses.append(response)
-                progress.advance(task)
 
             for file_path in source_files:
-                relative_path = file_path.relative_to(repo_path)
-                progress.update(
-                    task, description=f"Analyzing {relative_path}...")
-                responses = self._analyze_source_file(file_path)
-                all_responses.extend(responses)
-                progress.advance(task)
+                responses = process_file(file_path, self._analyze_source_file)
+                if responses:
+                    all_responses.extend(responses)
 
         return all_responses
 
